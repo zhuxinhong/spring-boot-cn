@@ -147,4 +147,80 @@ Spring Boot 1.3 现在支持在metadata中使用 Maven boms 来管理依赖。@D
 
 *	prefix.spring.groovy.template.prefix ---> prefix.spring.groovy.resource-loader-location
 
+###	依赖
+
+#####	Spring 4.2
+Spring Boot 1.3 需要Spring Framework4.2以上版本，并不向下兼容。
+
+#####	Spring Security 4.0
+Spring Boot 1.3 使用Spring Security 4.0。从3.2迁移的可以参考[文档](http://docs.spring.io/autorepo/docs/spring-security/4.0.x/reference/htmlsingle/#m3to4)
+
+##	新特性
+
+配置更新[changelog](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-1.3.0-Configuration-Changelog)。
+
+### 版本升级
+
+Spring Boot 1.3 依赖Spring Framework4.2构建。升级了部分第三方依赖的版本。Tomcat和Jetty的版本没有重大升级。
+
+###	开发者工具
+
+为了节约开发时间，Spring Boot 1.3 新增了一个 spring-boot-devtools 的module。该module特性：
+
+*	合理的属性默认值(例如关闭模板缓存)
+* 	自动重启应用
+*  	支持LiveReload(自动刷新浏览器)
+*	远程开发支持(包括远程更新和http方式的远程调试)
+* 	重启时持久化Http Session
+
+更多请见[文档](http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#using-boot-devtools)。
+
+###	缓存配置
+
+提供以下几种缓存组件的配置：
+
+*	EhCache
+* 	Hazelcast
+*  	Infinispan
+*  	任意JCache (JSR 107)的实现
+*	Redis
+*	Guava	
+
+此外，同时也支持简单Map结构内存缓存。当注解了@EnableCaching会自动启用缓存配置。缓存的统计同时也可作为断点暴露(需缓存组件支持)。
+
+了解更多详情请参考[文档](http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#boot-features-caching)。
+
+###	可执行Jar文件
+
+Spring Boot Maven和Gradle插件可以在Linux/Unix操作系统下生成完整的可执行文件。此外，你可以轻松的使用 init.d 或者 systemd 等服务把这些jar注册成服务。像下面这样运行Jar：
+
+```
+$ ./myapp.jar
+```
+
+注册服务
+
+```
+$ sudo link -s /var/myapp/myapp.jar /etc/init.d/myapp
+```
+
+详情请见[文档](http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#deployment-service)。
+
+###	Cassandra
+
+提供了Cassandra的自动配置，参考[文档](http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#boot-features-cassandra)。
+
+###	OAuth2
+
+可使用  @EnableAuthorizationServer 和 @EnableResourceServer 快速创建Oauth2的授权和资源服务。此外， @EnableOAuth2Client 能把你的应用变成一个OAuth2的客户端。详见[文档](http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#boot-features-security-oauth2)。
+
+###	Spring Session
+
+使用Spring Session和Spring Data Redis后，通过自动配置web应用能把用户session存储在Redis。详见[例子](https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples/spring-boot-sample-session-redis)。
+
+###	jOOQ
+
+提供 jOOQ 的自动配置。可以在Spring Bean中直接注入 jOOQ 的 DSLContext来创建安全的数据库查询。此外还通过 spring.jooq.* 属性提供了自定义的配置。
+详见[文档](http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#boot-features-jooq)。
+
 
