@@ -223,4 +223,51 @@ $ sudo link -s /var/myapp/myapp.jar /etc/init.d/myapp
 提供 jOOQ 的自动配置。可以在Spring Bean中直接注入 jOOQ 的 DSLContext来创建安全的数据库查询。此外还通过 spring.jooq.* 属性提供了自定义的配置。
 详见[文档](http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#boot-features-jooq)。
 
+###	SendGrid
 
+支持[SendGrid](https://sendgrid.com/)的自动配置。
+
+###	Artemis
+
+在2015年，HornetQ捐献给Apache后产生了Apache Artemis。在Spring Boot 1.3，完全支持了Apache Artemis，使用方式和Hornet几乎完全相同。如果你正在向Artemis迁移，需要重命名 spring.hornetq. 属性为 spring.artemis. 。
+
+###	Validation "Starter POM"
+
+新增了 spring-boot-starter-validation “starter POM”来验证bean，支持JSR 303规范。
+
+###	@WebSerlet, @WebFilter, @WebListener
+
+当使用内置容器时，通过使用 @ServletComponentScan 来自动注册被@WebServlet、@WebFilter和@WebListener注解的类。
+
+###	Spring 资源链
+
+现在可以通过配置文件配置Spring的基本通用功能。为了清除缓存可以创建独特的资源名称。spring.resources.chain.strategy.content. 配置可用于资源内容的指纹配置。spring.resources.chain.strategy.fixed. 可为你的指纹声明" fixed version "。
+
+###	JDBC
+
+Spring Boot 会根据JDBC URL自动推断数据库驱动，包括以下数据库：
+
+*	DB2
+*	Firebird
+* 	Teradata
+
+###	DataSource 类型
+
+连接池类型可通过 spring.datasource.type 来配置。
+
+###	H2 Web 控制台
+
+新增了[H2 Web 控制台](http://www.h2database.com/html/quickstart.html#h2_console)的配置。如果你正使用Spring Boot的开发工具，有必要在web应用加上 com.h2database:h2 依赖。详见[文档](http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#boot-features-sql-h2-console)。
+
+###	内置 MongoDB
+
+新增了内置[MongoDB](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo)配置。依赖是 de.flapdoodle.embed:de.flapdoodle.embed.mongo 。相关配置，例如版本需要在 application.properties. 中声明。详见[文档](http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#boot-features-mongo-embedded)。
+
+###	banner.txt 增加ANSI颜色
+
+在banner.txt中，可使用ANSI占位符来指定输出颜色。任何 ${Ansi.}, ${AnsiColor.}, ${AnsiBackground.} 和 ${AnsiStyle.} 等属性都会被解析。例如：
+
+```
+${AnsiColor.BRIGHT_GREEN}My Application
+${AnsiColor.BRIGHT_YELLOW}${application.formatted-version}${AnsiColor.DEFAULT}
+```
