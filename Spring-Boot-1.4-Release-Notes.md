@@ -306,3 +306,327 @@ HornetQ 的支持已被弃用。使用 HornetQ 的用户应考虑迁移到 Artem
 ##	新特性
 >
 具体可参考 [changelog](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-1.4-Configuration-Changelog)。
+
+###	Spring Framework 4.3
+
+Spring Boot 1.4 基于 Spring Framework 4.3。Spring Framework 4.3 中有一些很好的改进，包括新的 Spring MVC @RequestMapping注释。 有关详细信息，请参阅[Spring Framework参考文档](http://docs.spring.io/spring-framework/docs/4.3.x/spring-framework-reference/htmlsingle/#new-in-4.3)。
+
+请注意，Spring Framework 4.3 中的测试框架需要JUnit 4.12。有关详细信息，请参阅[SPR-13275](https://jira.spring.io/browse/SPR-13275)。
+
+###	第三方类库升级
+
+许多第三方类库已升级到最新版本。更新包括Jetty 9.3，Tomcat 8.5，Jersey 2.23，Hibernate 5.0，Jackson 2.7，Solr 5.5，Spring Data Hopper，Spring Session 1.2，Hazelcast 3.6，Artemis 1.3，Ehcache 3.1，Elasticsearch 2.3，Spring REST Docs 1.1，Spring AMQP 1.6 和 Spring Integration 4.3。
+
+少数几个 Maven 插件也有升级。
+
+###	支持 Couchbase
+
+现在提供了 Couchbase 的全量配置。你可以通过添加 spring-boot-starter-data-couchbase 依赖并提供一些轻量配置，轻松访问 Bucket 和 Cluster bean：
+
+```
+spring.couchbase.bootstrap-hosts=my-host-1,192.168.1.123
+spring.couchbase.bucket.name=my-bucket
+spring.couchbase.bucket.password=secret
+```
+
+同时可以把 Couchbase 当做 Spring Data Repository 的备用存储或者是缓存来使用。详情参考[升级文档](http://docs.spring.io/spring-boot/docs/1.4.x/reference/htmlsingle/#boot-features-couchbase)。
+
+###	支持 Neo4J
+
+现在为 Neo4J 提供自动配置支持。你可以连接到远程服务器或运行嵌入式Neo4J服务器。同时可以像 Spring Data Repository 一样使用它，例如：
+
+```Java
+public interface CityRepository extends GraphRepository<City> {
+
+	Page<City> findAll(Pageable pageable);
+
+	City findByNameAndCountry(String name, String country);
+
+}
+```
+具体细节参考[Neo4J文档](http://docs.spring.io/spring-boot/docs/1.4.x/reference/htmlsingle/#boot-features-neo4j)。
+
+###	Redis Spring Data repositories
+
+Redis 现在可以直接用于 Spring Data repositories。详情参考[Spring Data Redis 文档](http://docs.spring.io/spring-data/redis/docs/current/reference/html/#redis.repositories)。
+
+###	支持 Narayana 事务管理
+
+现在提供 Narayana 事务管理器自动配置的支持。如果你需要 JTA 支持，可以选择Narayana，Bitronix 或 Atomkos。 有关详细信息，请参阅更新的[参考文档](http://docs.spring.io/spring-boot/docs/1.4.x/reference/htmlsingle/#boot-features-jta-narayana)。
+
+###	支持 Caffeine cache
+
+提供 Caffeine v2.2（Java 8重写 Guava 缓存支持）的自动配置。现在的 Guava 缓存用户应该考虑迁移到 Caffeine，因为 Guava 缓存支持将在将来的版本中被删除。
+
+###	支持 Elasticsearch Jest
+
+如果 Jest 在 classpath 中，SpringBoot 会自动配置一个 JestClient 和专用的 HealthIndicator。当 spring-data-elasticsearch 不在 classpath 中同样允许你使用 Elasticsearch。
+
+###	启动失败的分析
+
+Spring Boot 现在将对常见的启动失败进行分析，并提供有用的诊断信息，而不是简单地记录异常及其堆栈跟踪。例如，由于嵌入式 servlet 容器的端口正在使用，启动失败在早期版本的 Spring Boot 中看起来是这样：
+
+```
+2016-02-16 17:46:14.334 ERROR 24753 --- [           main] o.s.boot.SpringApplication               : Application startup failed
+
+java.lang.RuntimeException: java.net.BindException: Address already in use
+    at io.undertow.Undertow.start(Undertow.java:181) ~[undertow-core-1.3.14.Final.jar:1.3.14.Final]
+    at org.springframework.boot.context.embedded.undertow.UndertowEmbeddedServletContainer.start(UndertowEmbeddedServletContainer.java:121) ~[spring-boot-1.3.2.RELEASE.jar:1.3.2.RELEASE]
+    at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.startEmbeddedServletContainer(EmbeddedWebApplicationContext.java:293) ~[spring-boot-1.3.2.RELEASE.jar:1.3.2.RELEASE]
+    at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.finishRefresh(EmbeddedWebApplicationContext.java:141) ~[spring-boot-1.3.2.RELEASE.jar:1.3.2.RELEASE]
+    at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:541) ~[spring-context-4.2.4.RELEASE.jar:4.2.4.RELEASE]
+    at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.refresh(EmbeddedWebApplicationContext.java:118) ~[spring-boot-1.3.2.RELEASE.jar:1.3.2.RELEASE]
+    at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:766) [spring-boot-1.3.2.RELEASE.jar:1.3.2.RELEASE]
+    at org.springframework.boot.SpringApplication.createAndRefreshContext(SpringApplication.java:361) [spring-boot-1.3.2.RELEASE.jar:1.3.2.RELEASE]
+    at org.springframework.boot.SpringApplication.run(SpringApplication.java:307) [spring-boot-1.3.2.RELEASE.jar:1.3.2.RELEASE]
+    at org.springframework.boot.SpringApplication.run(SpringApplication.java:1191) [spring-boot-1.3.2.RELEASE.jar:1.3.2.RELEASE]
+    at org.springframework.boot.SpringApplication.run(SpringApplication.java:1180) [spring-boot-1.3.2.RELEASE.jar:1.3.2.RELEASE]
+    at sample.undertow.SampleUndertowApplication.main(SampleUndertowApplication.java:26) [classes/:na]
+Caused by: java.net.BindException: Address already in use
+    at sun.nio.ch.Net.bind0(Native Method) ~[na:1.8.0_60]
+    at sun.nio.ch.Net.bind(Net.java:433) ~[na:1.8.0_60]
+    at sun.nio.ch.Net.bind(Net.java:425) ~[na:1.8.0_60]
+    at sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:223) ~[na:1.8.0_60]
+    at sun.nio.ch.ServerSocketAdaptor.bind(ServerSocketAdaptor.java:74) ~[na:1.8.0_60]
+    at org.xnio.nio.NioXnioWorker.createTcpConnectionServer(NioXnioWorker.java:190) ~[xnio-nio-3.3.4.Final.jar:3.3.4.Final]
+    at org.xnio.XnioWorker.createStreamConnectionServer(XnioWorker.java:243) ~[xnio-api-3.3.4.Final.jar:3.3.4.Final]
+    at io.undertow.Undertow.start(Undertow.java:137) ~[undertow-core-1.3.14.Final.jar:1.3.14.Final]
+    ... 11 common frames omitted
+```
+
+在 1.4，会是这样：
+
+```
+2016-02-16 17:44:49.179 ERROR 24745 --- [           main] o.s.b.d.LoggingFailureAnalysisReporter   :
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Embedded servlet container failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+```
+
+如果仍然希望查看原因并追踪堆栈，请为org.springframework.boot.diagnostics.Logging FailureAnalysisReporter 启用调试日志记录。
+
+###	图片 Banner
+
+现在可以使用图像文件来渲染 ASCII 编码的 banner。将一个banner.gif，banner.jpg或 banner.png 文件拖放到 src/main/resources 中，使其自动转换为 ASCII。 您可以使用 banner.image.width 和 banner.image.height 属性来调整大小，或者使用banner.image.invert 来反转颜色。
+
+###	RestTemplate builder
+
+一个新的 RestTemplateBuilder 可以用来轻松创建一个具有合理默认值的RestTemplate。默认情况下，构建的 RestTemplate 将尝试使用类路径中可用的最合适的 ClientHttpRequestFactory，并且将知道要使用的 MessageConverter 实例（包括Jackson）。构建器包含一些可用于快速配置RestTemplate的有用方法。 例如，要添加BASIC auth支持，可以使用：
+
+```Java
+@Bean
+public RestTemplate restTemplate(RestTemplateBuilder builder) {
+	return builder.basicAuthorization("user", "secret").build();
+}
+```
+
+自动配置的 TestRestTemplate 现在也使用了 RestTemplateBuilder。
+
+###	JSON 组件
+
+现在为自定义的 Jackson JsonSerializer 和 JsonDeserializer 注册提供了一个新的 @JsonComponent 注释。 这可以是解析JSON序列化逻辑的有用方法：
+
+```Java
+@JsonComponent
+public class Example {
+
+	public static class Serializer extends JsonSerializer<SomeObject> {
+		// ...
+	}
+
+	public static class Deserializer extends JsonDeserializer<SomeObject> {
+		// ...
+	}
+
+}
+```
+
+此外，Spring Boot 还提供了 JsonObjectSerializer 和 JsonObjectDeserializer 基类，它们在序列化对象时为标准的 Jackson 版本提供了有用的替代方法。详情参考[升级文档](http://docs.spring.io/spring-boot/docs/1.4.x/reference/htmlsingle/#boot-features-json-components)。
+
+###	error pages 约定
+
+现在可以通过遵循基于约定的方法创建给定状态代码的自定义错误页面。在 /public/error中创建静态HTML文件，或者使用状态代码作为文件名将模板添加到 /templates/error。 例如，要注册一个自定义的404文件，您可以添加 src/main/resource/public/error/404.html。详见[升级文档](http://docs.spring.io/spring-boot/docs/1.4.x/reference/htmlsingle/#boot-features-error-handling-custom-error-pages)。
+
+###	统一的 @EntityScan
+
+现在可以使用 org.springframework.boot.autoconfigure.domain.EntityScan 来指定要用于 JPA，Neo4J，MongoDB，Cassandra 和 Couchbase 的包。因此，JPA特定的org.springframework.boot.orm.jpa.EntityScan现在已被弃用。
+
+###	ErrorPageRegistry
+
+新的 ErrorPageRegistry 和 ErrorPageRegistrar 接口允许以一致的方式注册错误页面，而不管是否使用嵌入式 servlet 容器。ErrorPageFilter 类已更新为现在是 ErrorPageRegistry，而不是伪造的 ConfigurableEmbeddedServletContainer。
+
+###	PrincipalExtractor
+
+如果需要使用自定义逻辑提取 OAuth2 Principal，那么现在可以使用 PrincipalExtractor 接口。
+
+###	Test
+
+Spring Boot 1.4 提供了详细测试检查的支持。测试类和实用程序现在提供 spring-boot-test 和 spring-boot-test-autoconfigure（尽管大多数用户将继续使用 spring-boot-starter-test）。 我们已经将 AssertJ，JSONassert 和 JsonPath 依赖关系添加到测试启动器。
+
+####	@SpringBootTest
+
+使用 Spring Boot 1.3，有多种写入 Spring Boot 测试的方式。 您可以使用@SpringApplicationConfiguration，@ContextConfiguration与SpringApplicationContextLoader，@IntegrationTest或@WebIntegrationTest。 使用 Spring Boot 1.4，单个 @SpringBootTest 注释替代了以上这些。
+
+将 @SpringBootTest 与 @RunWith（SpringRunner.class）结合使用，并根据要编写的测试类型设置 webEnvironment 属性。
+
+一个典型的集成 mocked servlet 测试：
+
+```Java
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class MyTest {
+
+	// ...
+
+}
+```
+
+一个运行在 server 上并监听特定端口的 web 集成测试：
+
+```Java
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment=WebEnvionment.DEFINED_PORT)
+public class MyTest {
+
+	// ...
+
+}
+```
+
+一个运行在 server 上并监听随机端口的 web 集成测试：
+
+```Java
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment=WebEnvionment.RANDOM_PORT)
+public class MyTest {
+
+	@LocalServerPort
+	private int actualPort;
+
+	// ...
+
+}
+```
+
+详见[升级文档](http://docs.spring.io/spring-boot/docs/1.4.x/reference/htmlsingle/#boot-features-testing-spring-boot-applications)。
+
+####	测试配置的自动探测
+
+大多数测试现在可以自动检测测试配置。如果您遵循 Spring Boot 建议的约定来构造代码，则在未定义显式配置时，将加载 @SpringBootApplication 类。如果需要加载一个不同的 @Configuration 类，可以将其作为嵌套的内部类包含在测试中，或者使用 @SpringBootTest 的 classes 属性。
+
+详见[文档](http://docs.spring.io/spring-boot/docs/1.4.x/reference/htmlsingle/#boot-features-testing-spring-boot-applications-detecting-config)。
+
+####	Mocking and spying beans
+
+想要将 ApplicationContext 中的单个 bean 替换为用于测试目的的 mock 是很常见的。使用Spring Boot 1.4，现在可以通过 @MockBean 在测试中注解一个字段：
+
+```Java
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class MyTest {
+
+	@MockBean
+	private RemoteService remoteService;
+
+	@Autowired
+	private Reverser reverser;
+
+	@Test
+	public void exampleTest() {
+		// RemoteService has been injected into the reverser bean
+		given(this.remoteService.someCall()).willReturn("mock");
+		String reverse = reverser.reverseSomeCall();
+		assertThat(reverse).isEqualTo("kcom");
+	}
+
+}
+```
+
+如果你想监视一个已经存在的 bean 而不是 mock，可以使用 @SpyBean：
+
+```Java
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class MyTest {
+
+	@MockBean
+	private RemoteService remoteService;
+
+	@Autowired
+	private Reverser reverser;
+
+	@Test
+	public void exampleTest() {
+		// RemoteService has been injected into the reverser bean
+		given(this.remoteService.someCall()).willReturn("mock");
+		String reverse = reverser.reverseSomeCall();
+		assertThat(reverse).isEqualTo("kcom");
+	}
+
+}
+```
+
+详见[升级文档](http://docs.spring.io/spring-boot/docs/1.4.x/reference/htmlsingle/#boot-features-testing-spring-boot-applications-mocking-beans)。
+
+####	tests 自动配置
+
+完整的应用程序自动配置有时会过度的测试，通常只想自动配置应用程序的特定“切片”。 Spring Boot 1.4 引入了一些专门的测试注释，可用于测试应用程序的特定部分：
+
+*	@JsonTest - 测试 JSON marshalling and unmarshalling.
+
+*	@WebMvcTest - 测试 用 MockMVC 注解了的 Spring MVC @Controllers
+
+*	@RestClientTest - 测试 RestTemplate 调用
+
+*	@DataJpaTest - 测试 Spring Data JPA
+
+许多注释提供了特定于测试额外的自动配置。例如，如果使用 @WebMvcTest，还可以使用 @Autowire 来配置 MockMvc 实例。
+
+详见[升级文档](http://docs.spring.io/spring-boot/docs/1.4.x/reference/htmlsingle/#boot-features-testing-spring-boot-applications-testing-autoconfigured-tests)。
+
+####	JSON AssertJ
+
+新的 JacksonTester，GsonTester 和 BasicJsonTester 类可以与 AssertJ 结合使用来测试 JSON 序列化和反序列化。测试人员可以使用 @JsonTest 注释或直接在测试类上使用：
+
+```Java
+@RunWith(SpringRunner.class)
+@JsonTest
+public class MyJsonTests {
+
+	private JacksonTester<VehicleDetails> json;
+
+	@Test
+	public void testSerialize() throws Exception {
+		VehicleDetails details = new VehicleDetails("Honda", "Civic");
+		assertThat(this.json.write(details)).isEqualToJson("expected.json");
+		assertThat(this.json.write(details)).hasJsonPathStringValue("@.make");
+	}
+
+}
+```
+
+有关详情，参考[文档](http://docs.spring.io/spring-boot/docs/1.4.x/reference/htmlsingle/#boot-features-testing-spring-boot-applications-testing-autoconfigured-json-tests)。
+
+####	@RestClientTest
+
+如果要测试 REST 客户端，可以使用 @RestClientTest 注释。默认情况下，它将自动配置Jackson 和 GSON，配置 RestTemplateBuilder 并添加对 MockRestServiceServer 的支持。
+
+####	Spring TEST Docs 自动配置
+
+结合上述对 MockMvc 自动配置的支持，Spring REST 文档的自动配置已经被引入。可以使用新的 @AutoConfigureRestDocs 注释启用 REST 文档。这将导致 MockMvc 实例被自动配置为使用 REST 文档，并且还消除了使用 REST 文档的JUnit规则的需要。有关详细信息，请参阅参考[文档](http://docs.spring.io/spring-boot/docs/1.4.x/reference/htmlsingle/#boot-features-testing-spring-boot-applications-testing-autoconfigured-rest-docs)的相关部分。
+
+####	测试应用
+
+spring-boot-starter-test 现在提供 [AssertJ](http://joel-costigliola.github.io/assertj/) 支持。
+
+org.springframework.boot.test 包中的测试工具已被移动到 spring-boot-test 中。
+
