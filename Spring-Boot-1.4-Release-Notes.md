@@ -630,3 +630,111 @@ spring-boot-starter-test 现在提供 [AssertJ](http://joel-costigliola.github.i
 
 org.springframework.boot.test 包中的测试工具已被移动到 spring-boot-test 中。
 
+###	Actuator 改进
+
+可以使用 InfoContributor 接口来注册需要被 /info 暴露的 bean。以下支持开箱即用：
+
+*	通过 Maven git-commit-id-plugin 插件或 Gradle gradle-git-properties 插件展示 Git 信息。（配置 management.info.git.mode=full 暴露全部细节）
+
+*	通过 Maven 或 Gradle 插件生成的构建信息。
+
+
+详情参考[文档](http://docs.spring.io/spring-boot/docs/1.4.x/reference/htmlsingle/#production-ready-application-info)。
+
+###	MetricsFilter 改进
+
+MetricsFilter 现在可以以经典的方式提交，也可以按 HTTP 方法分组提交。通过 endpoints.metrics.filter 属性配置：
+
+```
+endpoints.metrics.filter.gauge-submissions=per-http-method
+endpoints.metrics.filter.counter-submissions=per-http-method,merged
+```
+
+###	Spring Session JDBC Initializer
+
+如果将 Spring Session 配置为使用JDBC存储，在启动时就会自动创建。
+
+###	Artemis/HornetQ 安全连接
+
+Spring Boot 现在允许连接一个安全的 Artemis / HornetQ 代理。
+
+###	Annotation processing
+
+Apache HttpCore 4.4.5 [删除了一些注解](https://github.com/apache/httpcore/commit/9e065bad07c9ca771c42e5b4f1dc12118c5e75c9)。如果你使用了注释并对其中一个已删除注释的类进行子类化，这会是一个不兼容的变更。例如，如果使用 @Immutable，会发现在编译时处理失败错误 [ERROR] diagnostic: error: cannot access org.apache.http.annotation.Immutable。
+
+要避免这个问题，可以通过降级为  HttpCore 4.4.4，或者硬编码解决，以便有问题的类不受编译时注释的影响。
+
+###	Miscellaneous
+
+*	新增 server.jetty.acceptors 和 server.jetty.selectors  配置来指定 Jetty acceptors 和 selectors。
+
+* 	server.max-http-header-size 和 server.max-http-post-size 可用来限制 HTTP headers 和 HTTP POST 最大值。在 Tomcat、Jetty 和 Undertow 上均生效。
+
+*	Tomcat 线程池最小备用线程数可以通过 server.tomcat.min-spare-threads 配置。
+
+*	application.yml 支持注释 profile。通过常见的 ! 前缀来设置 spring.profiles 的值。
+
+*	actuator 提供了一个新的 headdump，返回一个经 GZip 压缩的 hprof 堆转储文件。
+
+*	Spring Mobile 会在为所有模板引擎提供自动配置。
+
+*	Spring Boot 的 Maven 插件允许使用新的 includeSystemScope 属性来绑定 system 作用域。
+
+*	当一个异常被 HandlerExceptionResolver  捕获时，通过 spring.mvc.log-resolved-exception 配置可以自动记录警告日志。
+
+*	在启动时可通过 spring.data.cassandra.schema-action 配置自定义的 schema 行为。
+
+*	Spring Boot 臃肿的 jar 消耗更少内存。
+
+*	语言字符集映射现在可通过 spring.http.encoding.mapping.<locale>=<charset> 配置。
+
+*	默认情况下，使用 spring.mvc.locale 配置的区域设置现在被请求的 Accept-Language 头部覆盖。 要恢复 1.3 中忽略 header 特性，请将 spring.mvc.locale-resolver 设置为 fixed。
+
+###	Spring Boot 1.4 中废弃的
+
+*	自 Spring Framework 4.3 起，废弃了 Velocity 的支持。
+
+*	废弃了 UndertowEmbeddedServletContainer 部分构造方法（大部分不受影响）。
+
+*	@ConfigurationProperties 注解中的 locations 和 merge 被 Environment 替代。
+
+*	不应再使用 protect 级别的 SpringApplication.printBanner 方法打印自定义 banner 。应改用 Banner 接口。
+
+*	protect 级别的 InfoEndpoint.getAdditionalInfo 方法已被弃用，可使用 InfoContributor 接口替代。
+
+*	org.springframework.boot.autoconfigure.test.ImportAutoConfiguration 移动到 org.springframework.boot.autoconfigure.
+
+*	org.springframework.boot.test 包下的所有类都被弃用。可查阅 upgrading 来了解详情。
+
+*	PropertiesConfigurationFactory.setProperties(Properties) 已被 PropertySources 替代。
+
+*	org.springframework.boot.context.embedded 下的少数类被移动到 org.springframework.boot.web.servlet. 下。
+
+*	org.springframework.boot.context.web 下所有类都被废弃或迁移。
+
+*	spring-boot-starter-ws Starter 重命名为 spring-boot-starter-web-services。
+
+*	spring-boot-starter-redis Starter 重命名为 spring-boot-starter-data-redis。
+
+*	spring-boot-starter-hornetq Starter 和配置被 spring-boot-starter-artemis 取代。
+
+*	management.security.role 被 management.security.roles 取代。
+
+*	@org.springframework.boot.orm.jpa.EntityScan 注释已被弃用，可使用@ org.springframework.boot.autoconfigure.domain.EntityScan替代或显示配置。 
+
+*	TomcatEmbeddedServletContainerFactory.getValves() 被 getContextValves() 取代。
+
+*	org.springframework.boot.actuate.system.EmbeddedServerPortFileWriter 被 org.springframework.boot.system.EmbeddedServerPortFileWriter 替代。
+
+*	org.springframework.boot.actuate.system.ApplicationPidFileWriter 被 org.springframework.boot.system.ApplicationPidFileWriter 替代。
+
+###	配置重命名
+
+*	spring.jackson.serialization-inclusion --> spring.jackson.default-property-inclusion.
+
+*	spring.activemq.pooled --> spring.activemq.pool.enabled.
+
+*	spring.jpa.hibernate.naming-strategy --> spring.jpa.hibernate.naming.strategy.
+
+*	server.tomcat.max-http-header-size --> server.max-http-header-size.
+
