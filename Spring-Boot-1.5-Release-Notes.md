@@ -79,3 +79,116 @@ OAuth2 资源过滤器的默认顺序从3更改为 SecurityProperties.ACCESS_OVE
 在 Spring Boot 1.4 及更早版本中，执行器将始终配置一些忽略的路径，而忽略掉 @EnableWebSecurity。这在1.5中得到纠正，以便使用 @EnableWebSecurity 将关闭Web安全性的所有自动配置，从而遵循配置。
 
 ##	新特性
+
+> 详情请参考[changelog](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-1.5-Configuration-Changelog)。
+
+###	升级第三方依赖
+
+一些第三方库升级到最新版本。包括 Spring Data Ingalls, Jetty 9.4, JooQ 3.9, AssertJ 2.6.0, Hikari 2.5 and Neo4J 2.1。少数几个 Maven 插件也进行了升级。
+
+###	Loggers endpoint
+
+新的 loggers actuator endpoint 允许即时查看和更改应用日志级别。有可用的 JMX 和 MVC endpoint。例如，要使用 MVC endpoint 更改日志级别，可以使用以下JSON POST到 /loggers/com.yourcorp.application
+
+```json
+{
+  "configuredLevel": "DEBUG"
+}
+```
+
+要使用 JMX endpoint 更新记录器，需使用 setLogLevel 操作。有关详细信息，请参阅[文档](http://docs.spring.io/spring-boot/docs/1.5.x-SNAPSHOT/reference/htmlsingle/#production-ready-loggers)。
+
+###	支持 Apache Kafka
+
+Spring Boot 1.5 新增了 spring-kafka 项目，为 Apache Kafka 提供自动配置。使用 Kafka 仅需要添加 spring-kafka 的依赖，并配置 `spring.kafka * 属性即可。
+
+从卡夫卡接收消息与注释方法一样简单：
+
+```Java
+@Component
+public class MyBean {
+
+    @KafkaListener(topics = "someTopic")
+    public void processMessage(String content) {
+        // ...
+    }
+
+}
+```
+
+###	扩展 Cloud Foundry actuator
+
+当你部署一个兼容的 Cloud Foundary 实时时，Spring Boot 的 actuator 模块提供了额外的支持。/cloudfoundryapplication 路径为所有 NamedMvcEndpoint beans 提供了一个替代的安全路由。
+
+Cloud Foundry 的管理界面可以利用 endpoint 来显示附加的 actuator 信息。
+
+有关 Cloud Foundry endpoint 更多信息，请参考[文档](http://docs.spring.io/spring-boot/docs/1.5.x-SNAPSHOT/reference/htmlsingle/#production-ready-cloudfoundry)。各种场景的的示例，可以阅读有关 PCF1.9 的[博客文章](https://blog.pivotal.io/pivotal-cloud-foundry/products/pivotal-cloud-foundry-1-9-sets-the-bar-on-massive-scale)。
+
+###	支持 LDAP
+
+Spring Boot 现在可以为任何兼容的 LDAP 服务器提供自动配置，以及从 Unbounded 支持嵌入式内存 LDAP 服务器。
+
+详情参考[文档](http://docs.spring.io/spring-boot/docs/1.5.x-SNAPSHOT/reference/htmlsingle/#boot-features-ldap)。
+
+###	支持 AuditEvents Endpoint 
+
+现在可以用一个新的 AuditEventsJmxEndpoint bean 来记录 AuditEvents。MBean 通过 AuditEventRepository find 方法提供入口例如 getData。身份验证和授权事件会被自动记录，也可以使用 AuditEventRepository 记录自定义事件。该信息也可用新的 /auditevents MVC endpoint 查看。
+
+###	事务管理配置
+
+现在可以使用 spring.transaction.* 属性来配置 PlatformTransactionManager。目前支持 “default-timeout” 和 rollback-on-commit-failure 属性。
+
+###	JmxEndpoint interface
+
+引入了一个新的 JmxEndpoint 接口，在 JMX 暴露的 actuator endpoint 基础上进行开发。该接口和 MVC endpoint 提供的 MvcEndpoint 接口非常相似。
+
+###	特殊迁移方式
+
+现在可以定义特定数据库的迁移。要使用供应商特定的迁移，请按如下所示设置 flyway.locations 属性：
+
+```
+flyway.locations=db/migration/{vendor}
+```
+
+详见[文档](http://docs.spring.io/spring-boot/docs/1.5.x-SNAPSHOT/reference/htmlsingle/#howto-execute-flyway-database-migrations-on-startup)。
+
+###	测试升级
+
+现在可以排除由 @Test... 等注解导入的自动配置。现在所有现有的 @Test... 注释都包含一个 excludeAutoConfiguration 属性。 或者，可以直接将 @ImportAutoConfiguration（exclude = ...）添加到测试中。
+
+Spring Boot 1.5 还引入了一个新的 @JdbcTest 注释，可以用来直接测试 JDBC。
+
+### 自定义 fat jar 
+
+Spring Boot Maven 和 Gradle 插件现在支持自定义 fat jar。此功能允许在Spring Boot之外开发诸如此类的 [layout](https://github.com/dsyer/spring-boot-thin-launcher)。 有关详细信息，请参阅更新的[文档](http://docs.spring.io/spring-boot/docs/1.5.x-SNAPSHOT/reference/htmlsingle/#build-tool-plugins-gradle-configuration-custom-repackager)。
+
+###	自定义 JmsTemplate
+
+可以使用 spring.jms.template.* 命名空间中提供的其他自定义属性配置 JmsTemplate。
+
+###	其他
+
+*	Mockito 2.x 可以与 @MockBean 一起使用（与Mockito 1.9保持兼容）。
+* 	内置启动脚本支持 forse-stop。
+*  	新增 Cassandra 的健康检查 bean。
+*	Cassandra 用户自定义的类型问题现已解决（例如 Spring Data 的 SimpleUserTypeResolver）。
+* 	skip 属性现在适用于 Spring Boot Maven插件 run，stop 和 repackage 指令。
+*  	如果找到多个 main 方法类，Maven 和 Gradle 插件现在将自动使用被 @SpringBootApplication 注释的 main 方法类。
+
+##	Spring Boot 1.5 中废弃的
+
+*	为了 setTldSkipPatterns，废弃了 TomcatEmbeddedServletContainerFactory.setTldSkip。
+* 	ApplicationStartingEvent 代替了 ApplicationStartedEvent。
+*  	LoggingApplicationListener 中的少数常量被 LogFile 版本替代。
+*	由于 Guava 将在 Spring Framework 5 中删除，Guava 缓存已被弃用。请升级到 Caffeine。
+* 	由于 CRaSH 不再积极维护，所以废弃了。
+*  	引入 JmxEndpoint 后，EndpointMBeanExporter 中的一些 protected 方法已被弃用。
+*  	SearchStrategy.ANCESTORS. 替代了 SearchStrategy.PARENTS 。
+*  	引入了 DBCP 2，废弃了 Apache DBCP 的支持。
+*  	server.undertow.buffers-per-region 因为[没有生效](https://issues.jboss.org/browse/UNDERTOW-587)，所以废弃该配置。
+*  	@AutoConfigureTestDatabase 从 org.springframework.boot.test.autoconfigure.orm.jpa 迁移到了 org.springframework.boot.test.autoconfigure.jdbc 包中。
+
+##	属性重命名
+
+*	server.max-http-post-size 属性已被特定的配置替代（例如 server.tomcat.max-http-post-size）	
+*	删除了 spring.data.neo4j.session.scope。
