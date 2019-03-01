@@ -7,3 +7,5 @@
 ##	[Spring Boot 1.4 发布](Spring-Boot-1.4-Release-Notes.md)
 
 ##	[Spring Boot 1.5 发布](Spring-Boot-1.5-Release-Notes.md)
+
+##	[Spring Boot 2.0 发布](Spring-Boot-2.0-Release-Notes.md)
