@@ -153,3 +153,17 @@ Metrics 可以被导出到很多系统中，开箱即用的 Spring Boot 2.0 提�
 
 更多细节，请参考更新文档中的 [Metrics 部分](https://docs.spring.io/spring-boot/docs/2.0.x/reference/htmlsingle/#production-ready-metrics)。
 
+-----
+
+### 数据支持
+除了上面提到的 “Reactive Spring Data” 外，在数据这块还有一些其他的升级。
+
+#### HikariCP
+在 SpringBoot2.0 中，默认数据库连接池从 Tomcat 换成了 HikariCP。我们发现 Hikari 表现更好，相比 Tomcat 更受用户欢迎。
+
+#### 初始化
+在 SpringBoot 2.0 中，优化了数据库初始化逻辑。默认情况下，Spring Batch、Spring Integration、Spring Session 和 Quartz 只在显示开启或使用内置数据库时候才做初始化。举个例子，如果你总是想初始化 Spring Batch，你可以配置 spring.batch.initialize-schema=always。
+
+如果你使用 Flyway 或 Liquibase 管理内置数据库，Spring Boot 会自动关闭 Hibernate 的 automic DDL 特性。
+
+
