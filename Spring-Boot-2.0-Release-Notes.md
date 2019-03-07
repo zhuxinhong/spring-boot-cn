@@ -166,4 +166,51 @@ Metrics 可以被导出到很多系统中，开箱即用的 Spring Boot 2.0 提�
 
 如果你使用 Flyway 或 Liquibase 管理内置数据库，Spring Boot 会自动关闭 Hibernate 的 automic DDL 特性。
 
+#### JOOQ
+Spring Boot 2.0 现在可以根据数据源自动检测 jOOQ 方言(类似于JPA方言)。还引入了一个新的 @JooqTest 注释，以简化使用 jOOQ 的测试。
 
+#### JdbcTemplate
+现在可以使用 spring.jdbc.template 对 JdbcTemplate 进行自动配置绑定。同时，自动装配的 NamedParameterJdbcTemplate 也会在后台重用 JdbcTemplate。
+
+#### Spring Data Web 配置
+Spring Boot 提供了一个新的配置 spring.data.web，可以轻松配置分页和排序。
+
+#### Influx DB
+Spring Boot 现在对开源时间序列数据库 InfluxDB 提供配置绑定。要启用 Influx DB，需要设置 spring.influx.url，并在 classpath 中包含 influx-db-java。
+
+#### 灵活的 Flyway/Liquibase
+如果只提供自定义的 url 或 user 配置属性，Flyway 和 Liquibase 现在使用标准数据源的配置。在迁移数据源时可以自定义 DataSource。
+
+#### Hibernate
+现在支持自定义 Hibernate 命名策略。对于高级场景，可以自定义 ImplicitNamingStrategy 或 PhysicalNamingStrategy 作为常规 bean 在上下文中使用。
+现在还能通过配置 HibernatePropertiesCustomizer 属性以更细粒度方式配置 Hibernate。
+
+#### 自定义 MongoDB Client
+Spring Boot 允许对 Mongo 客户端进行高级定制，新开放了  MongoClientSettingsBuilderCustomizer bean。
+
+#### Redis
+现在使用 spring.cache.redis.* 对默认缓存 Redis 进行配置。
+
+-----
+### Web
+除了上面提到对 WebFlux 和 WebFlux.fn 的支持，在开发 Web 应用时还做了以下改进。
+
+#### 日志记录 Context Path
+在使用一个内置容器时，context path 会在应用启动时被日志输出在 HTTP 端口边上。举个例子，内置 Tomcat 现在会是这样：
+
+```
+Tomcat started on port(s): 8080 (http) with context path '/foo'
+```
+
+#### Web Filter 初始化
+在支持的容器上，过滤器更快被初始化。
+
+#### Thymeleaf
+Thymeleaf starter 组件现在通过 thymeleaf-extras-java8time 来支持 javax.time 类型。
+
+#### JSON
+一个新的 spring-boot-starter-json 组件将收集读写 JSON 所需的数据。它不仅提供了 jackson-databind，还在使用 java8 时提供了对应模块 jackson-datatype-jdk8, jackson-datatype-jsr310 和 jackson-module-parameter-names。这个组件现在替代了之前 jackson-databind 模块。
+
+如果你不喜欢 Jackson，在 Spring Boot 2.0 中对 Gson 的支持得到了很大改进。我们还引入了对 Json—B 的支持（包括 Json-B 的测试）。
+
+### Quartz
