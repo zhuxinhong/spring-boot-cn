@@ -153,8 +153,6 @@ Metrics 可以被导出到很多系统中，开箱即用的 Spring Boot 2.0 提�
 
 更多细节，请参考更新文档中的 [Metrics 部分](https://docs.spring.io/spring-boot/docs/2.0.x/reference/htmlsingle/#production-ready-metrics)。
 
------
-
 ### 数据支持
 除了上面提到的 “Reactive Spring Data” 外，在数据这块还有一些其他的升级。
 
@@ -191,7 +189,6 @@ Spring Boot 允许对 Mongo 客户端进行高级定制，新开放了  MongoCli
 #### Redis
 现在使用 spring.cache.redis.* 对默认缓存 Redis 进行配置。
 
------
 ### Web
 除了上面提到对 WebFlux 和 WebFlux.fn 的支持，在开发 Web 应用时还做了以下改进。
 
