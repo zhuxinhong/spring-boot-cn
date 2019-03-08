@@ -214,3 +214,36 @@ Thymeleaf starter 组件现在通过 thymeleaf-extras-java8time 来支持 javax.
 如果你不喜欢 Jackson，在 Spring Boot 2.0 中对 Gson 的支持得到了很大改进。我们还引入了对 Json—B 的支持（包括 Json-B 的测试）。
 
 ### Quartz
+现在对 Quartz 调度器提供了自动配置功能。同时也新增了一个 spring-boot-starter-quartz 的 POM 引用。
+
+你可以使用内存级别的 JobStores 或由 JDBC 进行持久化的存储。JobDetail, Calendar 和 Triiger 这些 bean 会在 Spring 应用上下文中会被 Scheduler 自动注册。
+
+更多详情请参考新的["Quartz Scheduler"](https://docs.spring.io/spring-boot/docs/2.0.x/reference/htmlsingle/#boot-features-quartz)相关章节。
+
+### 测试
+在 SpringBoot 2.0 中对测试提供一些新的支持及调整：
+
+* 新的 @WebFluxTest 注解支持 WebFlux 应用的 “slice” 测试。
+* Converter 和 GenericConverter 现在通过 @WebMvcTest 和 @WebFluxTest 自动注册。
+* 新的 @AutoConfigureWebTestClient 注解被用来支持 WebTestClient。这个注解也会被用于 @WebFluxTest。
+* 新的 ApplicationContextRunner 被用来测试你的自动配置。我们已经将大部分内部测试迁移到这个新模型中。详情参考[文档](https://docs.spring.io/spring-boot/docs/2.0.x/reference/htmlsingle/#boot-features-test-autoconfig)。
+
+### 杂项
+除了上面提到的变化之外，也有很多小的调整和改进，包括：
+
+* @ConditionalOnBean 在确定是否满足逻辑条件时使用逻辑 AND，而不是 OR。
+* 没有条件判断的类现在会在自动配置绑定报告中体现。
+* Spring CLI 提供一个 encodepassword 命令用以创建与 Spring Security 兼容的哈希密码。
+* 可以使用 scheduledtasks actuator 来查看调度任务。
+* loggers actuator 允许你重置当前日志等级为默认。 
+* sessions actuator 可以被用来查看和删除 Spring  用户的 session。
+* 基于 maven 的 spring-boot-starter-parent 现在默认使用 -parameters 作为标识。
+* 我们现在使用 [concourse](http://concourse.ci/) 做构建，工程的 POM 文件也被重构，这样看起来更加简洁。（这些更改对大多数用户是透明的，但如果你发现任何发布的 POM 问题请及时[反馈](https://github.com/spring-projects/spring-boot/issues)）。
+
+
+### 动态 ASCII
+最后，为了好玩，Spring Boot 2.0 现在支持用 GIF 作为 banner。参考这个[例子](https://github.com/snicoll-demos/demo-animated-banner)。
+
+![git_banner](images/animated-ascii-art.gif)
+
+
